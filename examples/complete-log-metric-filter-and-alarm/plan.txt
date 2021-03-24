@@ -1,0 +1,84 @@
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.alarm.aws_cloudwatch_metric_alarm.this[0] will be created
+  + resource "aws_cloudwatch_metric_alarm" "this" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "Log errors are too high"
+      + alarm_name                            = (known after apply)
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 1
+      + id                                    = (known after apply)
+      + metric_name                           = "ErrorCount"
+      + namespace                             = "MyAppNamespace"
+      + period                                = 60
+      + statistic                             = "Sum"
+      + threshold                             = 10
+      + treat_missing_data                    = "missing"
+      + unit                                  = "Count"
+    }
+
+  # module.aws_sns_topic.aws_sns_topic.this will be created
+  + resource "aws_sns_topic" "this" {
+      + arn    = (known after apply)
+      + id     = (known after apply)
+      + name   = (known after apply)
+      + policy = (known after apply)
+    }
+
+  # module.aws_sns_topic.random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+  # module.log.aws_cloudwatch_log_group.this will be created
+  + resource "aws_cloudwatch_log_group" "this" {
+      + arn               = (known after apply)
+      + id                = (known after apply)
+      + name              = (known after apply)
+      + retention_in_days = 0
+    }
+
+  # module.log.random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+  # module.log_metric_filter.aws_cloudwatch_log_metric_filter.this[0] will be created
+  + resource "aws_cloudwatch_log_metric_filter" "this" {
+      + id             = (known after apply)
+      + log_group_name = (known after apply)
+      + name           = (known after apply)
+      + pattern        = "ERROR"
+
+      + metric_transformation {
+          + name      = "ErrorCount"
+          + namespace = "MyAppNamespace"
+          + value     = "1"
+        }
+    }
+
+Plan: 6 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + this_cloudwatch_log_metric_filter_id = (known after apply)
+  + this_cloudwatch_metric_alarm_arn     = (known after apply)
+  + this_cloudwatch_metric_alarm_id      = (known after apply)
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+

@@ -1,0 +1,316 @@
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.alarm.aws_cloudwatch_metric_alarm.this[0] will be created
+  + resource "aws_cloudwatch_metric_alarm" "this" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "Lambda duration is too high"
+      + alarm_name                            = (known after apply)
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      + dimensions                            = (known after apply)
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 1
+      + id                                    = (known after apply)
+      + metric_name                           = "Duration"
+      + namespace                             = "AWS/Lambda"
+      + period                                = 60
+      + statistic                             = "Maximum"
+      + threshold                             = 10
+      + treat_missing_data                    = "missing"
+      + unit                                  = "Milliseconds"
+    }
+
+  # module.alarm_metric_query.aws_cloudwatch_metric_alarm.this[0] will be created
+  + resource "aws_cloudwatch_metric_alarm" "this" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "Lambda error rate is too high"
+      + alarm_name                            = (known after apply)
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 1
+      + id                                    = (known after apply)
+      + tags                                  = {
+          + "Secure" = "maybe"
+        }
+      + threshold                             = 10
+      + treat_missing_data                    = "missing"
+
+      + metric_query {
+          + id          = "m1"
+          + return_data = false
+
+          + metric {
+              + dimensions  = (known after apply)
+              + metric_name = "Invocations"
+              + namespace   = "AWS/Lambda"
+              + period      = 60
+              + stat        = "Sum"
+              + unit        = "Count"
+            }
+        }
+      + metric_query {
+          + id          = "m2"
+          + return_data = false
+
+          + metric {
+              + dimensions  = (known after apply)
+              + metric_name = "Errors"
+              + namespace   = "AWS/Lambda"
+              + period      = 60
+              + stat        = "Sum"
+              + unit        = "Count"
+            }
+        }
+      + metric_query {
+          + expression  = "m2/m1*100"
+          + id          = "e1"
+          + label       = "Error Rate"
+          + return_data = true
+        }
+    }
+
+  # module.all_lambdas_errors_alarm.aws_cloudwatch_metric_alarm.this[0] will be created
+  + resource "aws_cloudwatch_metric_alarm" "this" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "Lambdas with errors"
+      + alarm_name                            = "all-lambdas-errors"
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanOrEqualToThreshold"
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 1
+      + id                                    = (known after apply)
+      + metric_name                           = "Errors"
+      + namespace                             = "AWS/Lambda"
+      + period                                = 60
+      + statistic                             = "Maximum"
+      + threshold                             = 0
+      + treat_missing_data                    = "missing"
+      + unit                                  = "Count"
+    }
+
+  # module.aws_lambda_function1.aws_iam_role.lambda will be created
+  + resource "aws_iam_role" "lambda" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "lambda.amazonaws.com"
+                        }
+                      + Sid       = ""
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + unique_id             = (known after apply)
+
+      + inline_policy {
+          + name   = (known after apply)
+          + policy = (known after apply)
+        }
+    }
+
+  # module.aws_lambda_function1.aws_iam_role_policy.lambda will be created
+  + resource "aws_iam_role_policy" "lambda" {
+      + id          = (known after apply)
+      + name        = (known after apply)
+      + name_prefix = "lambda-policy-"
+      + policy      = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action   = [
+                          + "logs:PutLogEvents",
+                          + "logs:CreateLogStream",
+                          + "logs:CreateLogGroup",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "arn:aws:logs:*:*:*"
+                      + Sid      = "AllowWriteToCloudwatchLogs"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + role        = (known after apply)
+    }
+
+  # module.aws_lambda_function1.aws_lambda_function.this will be created
+  + resource "aws_lambda_function" "this" {
+      + arn                            = (known after apply)
+      + filename                       = "../fixtures/aws_lambda_function/test.zip"
+      + function_name                  = (known after apply)
+      + handler                        = "index.lambda_handler"
+      + id                             = (known after apply)
+      + invoke_arn                     = (known after apply)
+      + last_modified                  = (known after apply)
+      + memory_size                    = 128
+      + package_type                   = "Zip"
+      + publish                        = false
+      + qualified_arn                  = (known after apply)
+      + reserved_concurrent_executions = -1
+      + role                           = (known after apply)
+      + runtime                        = "python3.6"
+      + signing_job_arn                = (known after apply)
+      + signing_profile_version_arn    = (known after apply)
+      + source_code_hash               = "sI8W78i5LbYiyf/LqjNoKS4Xi2t6MmBBXfxZb+Y0AzM="
+      + source_code_size               = (known after apply)
+      + timeout                        = 3
+      + version                        = (known after apply)
+
+      + tracing_config {
+          + mode = (known after apply)
+        }
+    }
+
+  # module.aws_lambda_function1.random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+  # module.aws_lambda_function2.aws_iam_role.lambda will be created
+  + resource "aws_iam_role" "lambda" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "lambda.amazonaws.com"
+                        }
+                      + Sid       = ""
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + unique_id             = (known after apply)
+
+      + inline_policy {
+          + name   = (known after apply)
+          + policy = (known after apply)
+        }
+    }
+
+  # module.aws_lambda_function2.aws_iam_role_policy.lambda will be created
+  + resource "aws_iam_role_policy" "lambda" {
+      + id          = (known after apply)
+      + name        = (known after apply)
+      + name_prefix = "lambda-policy-"
+      + policy      = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action   = [
+                          + "logs:PutLogEvents",
+                          + "logs:CreateLogStream",
+                          + "logs:CreateLogGroup",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "arn:aws:logs:*:*:*"
+                      + Sid      = "AllowWriteToCloudwatchLogs"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + role        = (known after apply)
+    }
+
+  # module.aws_lambda_function2.aws_lambda_function.this will be created
+  + resource "aws_lambda_function" "this" {
+      + arn                            = (known after apply)
+      + filename                       = "../fixtures/aws_lambda_function/test.zip"
+      + function_name                  = (known after apply)
+      + handler                        = "index.lambda_handler"
+      + id                             = (known after apply)
+      + invoke_arn                     = (known after apply)
+      + last_modified                  = (known after apply)
+      + memory_size                    = 128
+      + package_type                   = "Zip"
+      + publish                        = false
+      + qualified_arn                  = (known after apply)
+      + reserved_concurrent_executions = -1
+      + role                           = (known after apply)
+      + runtime                        = "python3.6"
+      + signing_job_arn                = (known after apply)
+      + signing_profile_version_arn    = (known after apply)
+      + source_code_hash               = "sI8W78i5LbYiyf/LqjNoKS4Xi2t6MmBBXfxZb+Y0AzM="
+      + source_code_size               = (known after apply)
+      + timeout                        = 3
+      + version                        = (known after apply)
+
+      + tracing_config {
+          + mode = (known after apply)
+        }
+    }
+
+  # module.aws_lambda_function2.random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+  # module.aws_sns_topic.aws_sns_topic.this will be created
+  + resource "aws_sns_topic" "this" {
+      + arn    = (known after apply)
+      + id     = (known after apply)
+      + name   = (known after apply)
+      + policy = (known after apply)
+    }
+
+  # module.aws_sns_topic.random_pet.this will be created
+  + resource "random_pet" "this" {
+      + id        = (known after apply)
+      + length    = 2
+      + separator = "-"
+    }
+
+Plan: 13 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + this_cloudwatch_metric_alarm_arn = (known after apply)
+  + this_cloudwatch_metric_alarm_id  = (known after apply)
+  + this_lambda_function1_arn        = (known after apply)
+  + this_lambda_function1_name       = (known after apply)
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+

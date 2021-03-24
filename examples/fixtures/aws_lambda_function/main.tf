@@ -6,7 +6,7 @@ data "archive_file" "lambda" {
   type = "zip"
 
   source {
-    content  = "def lambda_handler(event, context): \n    return event" # or: return event['Records'][0]
+    content  = "def lambda_handler(event, context):\n    print(event)\n    return event" # or: return event['Records'][0]
     filename = "index.py"
   }
 
