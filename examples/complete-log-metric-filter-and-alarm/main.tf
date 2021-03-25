@@ -23,8 +23,9 @@ module "log_metric_filter" {
   name    = "metric-${module.log.random_id}"
   pattern = "ERROR"
 
-  metric_transformation_namespace = local.metric_transformation_namespace
-  metric_transformation_name      = local.metric_transformation_name
+  metric_transformation_namespace     = local.metric_transformation_namespace
+  metric_transformation_name          = local.metric_transformation_name
+  metric_transformation_default_value = 0
 }
 
 module "alarm" {
@@ -34,7 +35,7 @@ module "alarm" {
   alarm_description   = "Log errors are too high"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
-  threshold           = 10
+  threshold           = 1
   period              = 60
   unit                = "Count"
 
